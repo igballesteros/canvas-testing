@@ -14,6 +14,13 @@ var c = canvas.getContext('2d');
 // move objects - create a function - this set up creates a loop
 // move circle into the animate function and create it within
 
+function RandomColor() {
+    var r = Math.floor(Math.random() * 256);
+    var g = Math.floor(Math.random() * 256);
+    var b = Math.floor(Math.random() * 256);
+    return ("rgba("+r+","+g+","+b+")");
+}
+
 function Circle(x, y, dx, dy, radius) {
     this.x = x;
     this.y = y;
@@ -24,7 +31,7 @@ function Circle(x, y, dx, dy, radius) {
     this.draw = () => {
         c.beginPath()
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        c.strokeStyle = "black";
+        c.strokeStyle = RandomColor();
         c.stroke()
     }
 
@@ -55,7 +62,7 @@ function Rectangle(x, y, width, height, dx, dy) {
 
     this.draw = () => {
         c.beginPath();
-        c.strokeStyle = "blue"
+        c.strokeStyle = RandomColor()
         c.rect(this.x, this.y, this.width, this.height)
         c.stroke();
     }
@@ -63,11 +70,11 @@ function Rectangle(x, y, width, height, dx, dy) {
 // || this.x < innerWidth
 
     this.update = function() {
-        if (this.x > innerWidth - this.width || this.x < this.width) {
+        if (this.x > innerWidth - this.width || this.x <= 0) {
             this.dx = -this.dx
         }
 
-        if (this.y > innerHeight - this.height|| this.y < innerHeight) {
+        if (this.y > innerHeight - this.height|| this.y < 0) {
             this.dy = -this.dy
         }
 
@@ -78,17 +85,8 @@ function Rectangle(x, y, width, height, dx, dy) {
     }
 }
 
-console.log(innerWidth)
-console.log(innerHeight)
-
-var a = 10;
-var b = 10;
-
-var rectangle11 = new Rectangle(a, b, 60, 60, 2, 0)
-
 var circleArray = []
-
-console.log((10>100 || 20 < 30))
+var rectArray = []
 
 for (var i = 0; i < 100; i++) {
     var x = Math.floor(Math.random() * innerWidth)
@@ -98,46 +96,18 @@ for (var i = 0; i < 100; i++) {
     var dy = Math.floor((Math.random() - 0.5) * 10)
 
     circleArray.push(new Circle(x, y, dx, dy, radius));
+    rectArray.push(new Rectangle(x, y, 60, 60, dx, dy));  
 }
 
-var rectArray = [];
+function animate() {
+    requestAnimationFrame(animate);
+    c.clearRect(0, 0, innerWidth, innerHeight)
 
-// for (var i = 0; i < 10; i++) {
-//     rectArray.push(new Rectangle((i+1)*10, (i+1)*10, 60, 60))
-// }
+    for (var i = 0; i < circleArray.length; i++) {
+        circleArray[i].update();
+        rectArray[i].update();
+    }
 
-console.log(rectArray)
+}
 
-
-c.beginPath();
-c.strokeStyle = "red"
-c.rect(100, 100, 150, 300);
-c.stroke();
-
-var a = 10;
-var b = 10;
-
-var rectangle11 = new Rectangle(a, b, 60, 60, 2, 0)
-
-// function animate() {
-//     requestAnimationFrame(animate);
-//     c.clearRect(0, 0, innerWidth, innerHeight)
-
-//     for (var i = 0; i < circleArray.length; i++) {
-//         circleArray[i].update();
-//     }
-
-//     // for (var i = 0; i < 10; i++) {
-//     //     rectArray[i].draw();
-//     // }
-
-//     c.beginPath();
-//     c.strokeStyle = "red"
-//     c.rect(a, b, 150, 300);
-//     c.stroke();
-
-//     rectangle11.update()
-
-// }
-
-// animate();
+animate();
