@@ -1,74 +1,143 @@
-function RandomColor() {
-    var r = Math.floor(Math.random() * 256);
-    var g = Math.floor(Math.random() * 256);
-    var b = Math.floor(Math.random() * 256);
-    return ("rgba("+r+","+g+","+b+")");
-}
-
-var canvas = document.querySelector('canvas');
+var canvas = document.querySelector("canvas");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-var c = canvas.getContext('2d')
+var c = canvas.getContext('2d');
 
-var primary = canvas.height * (3/7);
-var secondary = canvas.height * (2/7);
+// circle created
+// c.beginPath()
+// c.arc(300, 300, 30, 0, Math.PI * 2, false);
+// c.strokeStyle = "black";
+// c.stroke();
 
-var centerHeight = canvas.height * 0.5;
-var centerWidth = canvas.width * 0.5;
+// move objects - create a function - this set up creates a loop
+// move circle into the animate function and create it within
 
-c.fillStyle = "rgba(255, 240, 0, 0.4)"
-c.fillRect(0, 0, canvas.width, primary)
+function Circle(x, y, dx, dy, radius) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.radius = radius;
 
-c.fillStyle = "rgba(0, 0, 255, 0.4)"
-c.fillRect(0, primary, canvas.width, secondary) //(x, y, width, height)
+    this.draw = () => {
+        c.beginPath()
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        c.strokeStyle = "black";
+        c.stroke()
+    }
 
-c.fillStyle = "rgba(255, 0, 0, 0.4)"
-c.fillRect(0, (primary+secondary), canvas.width, secondary)
+    this.update = () => {
+        if (this.x > innerWidth - this.radius || this.x < this.radius) {
+            this.dx = -this.dx;
+        }
+    
+        if (this.y > innerHeight - this.radius || this.y < this.radius) {
+            this.dy = -this.dy;
+        }
+    
+        this.x += this.dx;
+        this.y += this.dy;
 
-console.log(canvas)
+        this.draw();
+    }
+}
 
-// Line
-c.beginPath();
-c.moveTo(centerWidth - 50, centerHeight - 50); //(x, y)
-c.lineTo(centerWidth + 50, centerHeight - 50);
-c.lineTo(centerWidth + 50, centerHeight + 50);
-c.lineTo(centerWidth - 50, centerHeight + 50);
-c.lineTo(centerWidth - 50, centerHeight - 50);
+function Rectangle(x, y, width, height, dx, dy) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.dx = dx;
+    this.dy = dy;
 
-c.strokeStyle = "black";
-c.stroke() // has to be after line is declared
 
-c.beginPath();
-c.moveTo(150, centerHeight);
-c.lineTo(canvas.width - 150, centerHeight)
-c.strokeStyle = "white";
-c.stroke() // has to be after line is declared
+    this.draw = () => {
+        c.beginPath();
+        c.strokeStyle = "blue"
+        c.rect(this.x, this.y, this.width, this.height)
+        c.stroke();
+    }
 
-c.beginPath();
-c.moveTo(centerWidth, 300);
-c.lineTo(centerWidth, canvas.height - 300);
-c.strokeStyle = "white";
-c.stroke(); // has to be after line is declared
+// || this.x < innerWidth
 
-// arc or circle
-// (x, y, radius, startAngle: float, endAngle: float, drawCounterClk: bool: true or false)
-// startAngle - start; endAngle - end; [radians]
+    this.update = function() {
+        if (this.x > innerWidth - this.width || this.x < this.width) {
+            this.dx = -this.dx
+        }
 
-c.beginPath();
-c.arc (centerWidth, centerHeight, 30, 0, Math.PI * 2, false);
-c.strokeStyle = "black"
-c.stroke();
+        if (this.y > innerHeight - this.height|| this.y < innerHeight) {
+            this.dy = -this.dy
+        }
+
+        this.x += this.dx;
+        this.y += this.dy;
+
+        this.draw();
+    }
+}
+
+console.log(innerWidth)
+console.log(innerHeight)
+
+var a = 10;
+var b = 10;
+
+var rectangle11 = new Rectangle(a, b, 60, 60, 2, 0)
+
+var circleArray = []
+
+console.log((10>100 || 20 < 30))
 
 for (var i = 0; i < 100; i++) {
-    var x = Math.random() * window.innerWidth;
-    var y = Math.random() * window.innerHeight;
+    var x = Math.floor(Math.random() * innerWidth)
+    var y = Math.floor(Math.random() * innerHeight)
+    var radius = 30;
+    var dx = Math.floor((Math.random() - 0.5) * 10)
+    var dy = Math.floor((Math.random() - 0.5) * 10)
 
-    c.beginPath();
-    c.arc(x, y, 50, 0, Math.PI * 2, false);
-    c.strokeStyle = RandomColor();
-    c.fillStyle = RandomColor();
-    c.fill()
-    c.stroke();
+    circleArray.push(new Circle(x, y, dx, dy, radius));
 }
+
+var rectArray = [];
+
+// for (var i = 0; i < 10; i++) {
+//     rectArray.push(new Rectangle((i+1)*10, (i+1)*10, 60, 60))
+// }
+
+console.log(rectArray)
+
+
+c.beginPath();
+c.strokeStyle = "red"
+c.rect(100, 100, 150, 300);
+c.stroke();
+
+var a = 10;
+var b = 10;
+
+var rectangle11 = new Rectangle(a, b, 60, 60, 2, 0)
+
+// function animate() {
+//     requestAnimationFrame(animate);
+//     c.clearRect(0, 0, innerWidth, innerHeight)
+
+//     for (var i = 0; i < circleArray.length; i++) {
+//         circleArray[i].update();
+//     }
+
+//     // for (var i = 0; i < 10; i++) {
+//     //     rectArray[i].draw();
+//     // }
+
+//     c.beginPath();
+//     c.strokeStyle = "red"
+//     c.rect(a, b, 150, 300);
+//     c.stroke();
+
+//     rectangle11.update()
+
+// }
+
+// animate();
